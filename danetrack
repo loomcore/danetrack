@@ -21,7 +21,6 @@
 ORIGIN=$PWD;
 # TRKDIR='/cygdrive/s/pyeeles/apps/data/track';
 TRKDIR=`which danetrack | head -c -11`;
-OUTDIR="$HOME/Desktop";
 
 perl $TRKDIR/track-cli.pl;
 cd $ORIGIN;
