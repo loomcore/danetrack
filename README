@@ -1,0 +1,15 @@
+danetrack 0.0.1
+
+A tool to track pupils' progress with iPad maths apps at Danetree,
+consisting of a backend, implemented in R, that generates plots of
+assessment results from a CSV file.  A Perl script provides a more
+n00b-friendly interface, and a shell script and batch file are
+included to "just run it", without having to interact with the
+terminal or Cygwin proper.
+
+Plots are output as PNG files to the user's desktop.
+
+Requirements:
+- Perl 5
+- R
+- Cygwin (if on Windows)
