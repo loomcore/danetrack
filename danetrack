@@ -20,7 +20,7 @@
 
 ORIGIN=$PWD;
 # TRKDIR='/cygdrive/s/pyeeles/apps/data/track';
-TRKDIR='/home/phil/dev/r/maths_ipads';
+TRKDIR=`which danetrack | head -c -11`;
 OUTDIR="$HOME/Desktop";
 
 perl $TRKDIR/track-cli.pl;
