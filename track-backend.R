@@ -60,6 +60,16 @@ if (type == "MeanAttempt") {
 # marks[i,from:to] # TODO: sort out from:to
 }
 
+# remove NA values
+if ((type == "Combined") || (type == "CombinedRate")) {
+  # for (i in 1:length(child[,1]))
+  tmp0 <- child[1,][!is.na(child[1,])] # brittle
+  tmp1 <- child[2,][!is.na(child[2,])]
+  child <- rbind(tmp0,tmp1)
+} else {
+  child <- child[!is.na(child)]
+}
+
 # paste("foo","bar",sep="") to concat strings
 namevec <- unlist(strsplit(name," "))
 title <- paste(paste(name,":",sep=""),switch(type,"AttemptRate"="Attempt Rate","CorrectRate"="Correct Rate","CombinedRate"="Answer Rates","Combined"="Questions Answered",type),sep=" ")
@@ -75,12 +85,13 @@ switch(type,
 fh <- paste(namevec[1],namevec[2],type,".png",sep="")
 
 png(fh)
+# 1:length(child) has replaced weeks and 8 to accommodate removed NAs
 if ((type == "Combined") || (type == "CombinedRate")) {
-  plot(weeks,child[1,],type="l",xlab="Session",ylab=ylabel,main=title,col="red",xaxs="i",yaxs="i",ylim=c(0,ceiling(max(child))),xlim=c(1,8))
-  lines(x=weeks,y=child[2,],col="blue")
+  plot(1:length(child[1,]),child[1,],type="l",xlab="Session",ylab=ylabel,main=title,col="red",xaxs="i",yaxs="i",ylim=c(0,ceiling(max(child))),xlim=c(1,length(child[1,])))
+  lines(x=1:length(child[2,]),y=child[2,],col="blue")
   legend("topleft",c("Attempted","Correct"),col=c("red","blue"),lty=1,lwd=1)
 } else {
-  plot(weeks,child,type="l",xlab="Session",ylab=ylabel,main=title,col="red",xaxs="i",yaxs="i",ylim=c(0,ceiling(max(child))),xlim=c(1,8))
+  plot(1:length(child),child,type="l",xlab="Session",ylab=ylabel,main=title,col="red",xaxs="i",yaxs="i",ylim=c(0,ceiling(max(child))),xlim=c(1,length(child)))
 }
 grid(col="lightgray")
 dev.off()
