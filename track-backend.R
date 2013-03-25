@@ -86,7 +86,7 @@ switch(type,
   "Time" = ylabel <- "Session Time")
 fh <- paste(namevec[1],namevec[2],type,".png",sep="")
 
-if (substring(type,nchar(type)-3,nchar(type)) == "Rate") {
+if ((substring(type,nchar(type)-3,nchar(type)) == "Rate") || (type == "Ratio")) {
   yticks <- seq(0,1,0.1)
   ylabs <- formatC(yticks,digits=1,format="f")
 } else {
