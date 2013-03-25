@@ -86,14 +86,35 @@ switch(type,
   "Time" = ylabel <- "Session Time")
 fh <- paste(namevec[1],namevec[2],type,".png",sep="")
 
+if (substring(type,nchar(type)-3,nchar(type)) == "Rate") {
+  yticks <- seq(0,1,0.1)
+  ylabs <- formatC(yticks,digits=1,format="f")
+} else {
+  yticks <- seq(floor(min(child)),ceiling(max(child)),10)
+  ylabs <- formatC(yticks,digits=0,format="f")
+}
+
 png(fh,width=1024,height=600)
 # 1:length(child) has replaced weeks and 8 to accommodate removed NAs
 if ((type == "Combined") || (type == "CombinedRate")) {
-  plot(1:length(child[1,]),child[1,],type="l",xlab="Session",ylab=ylabel,main=title,col="red",xaxs="i",yaxs="i",ylim=c(floor(min(child)),ceiling(max(child))),xlim=c(1,length(child[1,])),xaxp=c(1,length(child),length(child)-1),yaxp=c(floor(min(child)),ceiling(max(child)),10))
+  plot(1:length(child[1,]),child[1,],type="l",xlab="Session",ylab=ylabel,main=title,col="red",xaxs="i",yaxs="i",ylim=c(floor(min(child)),ceiling(max(child))),xlim=c(1,length(child[1,])),xaxp=c(1,length(child),length(child)-1),yaxt="n") # yaxp=c(floor(min(child)),ceiling(max(child)),10))
+  axis(side=2,at=yticks,labels=ylabs)
   lines(x=1:length(child[2,]),y=child[2,],col="blue")
+
+  model0 <- lm(unlist(child[1,])~seq(1,length(unlist(child[1,])),1))
+  abline(model0,col="red",pch=23,lty=2)
+
+  model1 <- lm(unlist(child[2,])~seq(1,length(unlist(child[2,])),1))
+  abline(model1,col="blue",pch=23,lty=2)
+
   legend("topleft",c("Attempted","Correct"),col=c("red","blue"),lty=1,lwd=1)
 } else {
-  plot(1:length(child),child,type="l",xlab="Session",ylab=ylabel,main=title,col="red",xaxs="i",yaxs="i",ylim=c(floor(min(child)),ceiling(max(child))),xlim=c(1,length(child)),xaxp=c(1,length(child),length(child)-1),yaxp=c(floor(min(child)),ceiling(max(child)),10))
+  plot(1:length(child),child,type="l",xlab="Session",ylab=ylabel,main=title,col="red",xaxs="i",yaxs="i",ylim=c(floor(min(child)),ceiling(max(child))),xlim=c(1,length(child)),xaxp=c(1,length(child),length(child)-1),yaxt="n")# yaxp=c(floor(min(child)),ceiling(max(child)),10))
+  axis(side=2,at=yticks,labels=ylabs)
+
+  model <- lm(unlist(child)~seq(1,length(unlist(child)),1))
+  abline(model,col="red",pch=23,lty=2)
+
 }
 grid(col="lightgray")
 dev.off()
