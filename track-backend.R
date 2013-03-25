@@ -30,10 +30,12 @@ marks <- read.csv(file)
 
 name <- args[2]
 type <- args[3]
-from <- args[4] # TODO: need to convert from date to col. index
-to <- args[5]   # TODO: need to convert from date to col. index
+# from <- args[4] # TODO: need to convert from date to col. index
+# to <- args[5]   # TODO: need to convert from date to col. index
 
-weeks <- c(1:8) # c(from:to)
+# weeks <- c(1:8) # c(from:to)
+
+rlen <- length(marks[1,])
 
 if (type == "MeanAttempt") {
   for(i in seq(1, length(marks[,1]), by=3)) {
@@ -44,17 +46,17 @@ if (type == "MeanAttempt") {
     # do something else
   }
 } else {
-  for(i in seq(1, length(marks), by=3)) {
+  for(i in seq(1, length(marks[,1]), by=3)) {
     if (name == marks[i,1]) {
       switch(type,
-        "Ratio" = child <- marks[i+1,3:10]/marks[i,3:10],
-        "AttemptRate" = child <- marks[i,3:10]/marks[i+2,3:10],
-        "CorrectRate" = child <- marks[i+1,3:10]/marks[i+2,3:10],
-        "Combined" = child <- rbind(marks[i,3:10],marks[i+1,3:10]),
-        "CombinedRate" = child <- rbind(marks[i,3:10]/marks[i+2,3:10],marks[i+1,3:10]/marks[i+2,3:10]),
-        "Attempted" = child <- marks[i,3:10],
-        "Correct" = child <- marks[i+1,3:10],
-        "Time" = child <- marks[i+2,3:10])
+        "Ratio" = child <- marks[i+1,3:rlen]/marks[i,3:rlen],
+        "AttemptRate" = child <- marks[i,3:rlen]/marks[i+2,3:rlen],
+        "CorrectRate" = child <- marks[i+1,3:rlen]/marks[i+2,3:rlen],
+        "Combined" = child <- rbind(marks[i,3:rlen],marks[i+1,3:rlen]),
+        "CombinedRate" = child <- rbind(marks[i,3:rlen]/marks[i+2,3:rlen],marks[i+1,3:rlen]/marks[i+2,3:rlen]),
+        "Attempted" = child <- marks[i,3:rlen],
+        "Correct" = child <- marks[i+1,3:rlen],
+        "Time" = child <- marks[i+2,3:rlen])
     }
   }
 # marks[i,from:to] # TODO: sort out from:to
@@ -84,14 +86,14 @@ switch(type,
   "Time" = ylabel <- "Session Time")
 fh <- paste(namevec[1],namevec[2],type,".png",sep="")
 
-png(fh)
+png(fh,width=1024,height=600)
 # 1:length(child) has replaced weeks and 8 to accommodate removed NAs
 if ((type == "Combined") || (type == "CombinedRate")) {
-  plot(1:length(child[1,]),child[1,],type="l",xlab="Session",ylab=ylabel,main=title,col="red",xaxs="i",yaxs="i",ylim=c(0,ceiling(max(child))),xlim=c(1,length(child[1,])))
+  plot(1:length(child[1,]),child[1,],type="l",xlab="Session",ylab=ylabel,main=title,col="red",xaxs="i",yaxs="i",ylim=c(floor(min(child)),ceiling(max(child))),xlim=c(1,length(child[1,])),xaxp=c(1,length(child),length(child)-1),yaxp=c(floor(min(child)),ceiling(max(child)),10))
   lines(x=1:length(child[2,]),y=child[2,],col="blue")
   legend("topleft",c("Attempted","Correct"),col=c("red","blue"),lty=1,lwd=1)
 } else {
-  plot(1:length(child),child,type="l",xlab="Session",ylab=ylabel,main=title,col="red",xaxs="i",yaxs="i",ylim=c(0,ceiling(max(child))),xlim=c(1,length(child)))
+  plot(1:length(child),child,type="l",xlab="Session",ylab=ylabel,main=title,col="red",xaxs="i",yaxs="i",ylim=c(floor(min(child)),ceiling(max(child))),xlim=c(1,length(child)),xaxp=c(1,length(child),length(child)-1),yaxp=c(floor(min(child)),ceiling(max(child)),10))
 }
 grid(col="lightgray")
 dev.off()
